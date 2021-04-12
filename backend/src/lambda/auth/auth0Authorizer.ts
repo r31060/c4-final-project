@@ -62,23 +62,36 @@ export const handler = async (
   }
 }
 
+// async function verifyToken(authHeader: string): Promise<JwtPayload> {
+//   const token = getToken(authHeader)
+//   const jwt: Jwt = decode(token, { complete: true }) as Jwt
+
+//   // TODO: Implement token verification
+//   // You should implement it similarly to how it was implemented for the exercise for the lesson 5
+//   // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
+//   const secretObj=await getSecret()
+//   const data=secretObj[secretField]
+
+//   logger.info(data)
+
+//   let buff = new Buffer(data, 'base64');
+//   let cert = buff.toString('ascii');
+
+//   logger.info(cert)
+//   return verify(token,cert,{algorithms:['RS256']}) as JwtPayload
+// }
+
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
   const token = getToken(authHeader)
-  const jwt: Jwt = decode(token, { complete: true }) as Jwt
-
-  // TODO: Implement token verification
-  // You should implement it similarly to how it was implemented for the exercise for the lesson 5
-  // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-  const secretObj=await getSecret()
-  const data=secretObj[secretField]
-
-  logger.info(data)
-
-  let buff = new Buffer(data, 'base64');
-  let cert = buff.toString('ascii');
-
-  logger.info(cert)
-  return verify(token,cert,{algorithms:['RS256']}) as JwtPayload
+  let cert: string;
+  try {
+    const response = await Axios.get(jwksUrl);
+    const pemData = response['data']['keys'][0]['x5c'][0];
+    cert = `-----BEGIN CERTIFICATE-----\n${pemData}\n-----END CERTIFICATE-----`;
+  } catch (err) {
+    console.log(err);
+  }
+  return verify(token, cert, { algorithms: ['RS256'] }) as JwtPayload
 }
 
 function getToken(authHeader: string): string {

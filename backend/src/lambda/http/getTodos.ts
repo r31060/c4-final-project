@@ -19,7 +19,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Origin": "*",
         'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({ "items": data })
@@ -29,7 +29,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     return {
       statusCode: 400,
       headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Origin": "*",
         'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({ "iterms": [] })

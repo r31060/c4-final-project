@@ -47,14 +47,14 @@ functions:
       - Effect: 'Allow'
         Action: 
           - dynamodb:Query
+          - dynamodb:GetItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.INDEX_NAME}
     events:
       - http:
           method: get
           path: todos
-          cors:
-            headers: '*'
           authorizer: Auth
+          cors: true
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     iamRoleStatements:
